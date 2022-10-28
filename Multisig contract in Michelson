@@ -1,0 +1,248 @@
+{
+    storage
+        (pair
+            (pair
+                (nat %inactiveBefore)
+                (pair
+                    (big_map %lambdas
+                        nat
+                        (lambda
+                            unit
+                            (list operation)))
+                    (set %members address)))
+            (pair
+                (nat %nextId)
+                (pair
+                    (nat %required_votes)
+                    (big_map %votes
+                        nat
+                        (set address)))));
+    parameter
+        (or
+            (lambda %submit_lambda
+                unit
+                (list operation))
+            (nat %vote_lambda));
+    code
+        {
+            UNPAIR;
+            IF_LEFT
+                {
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    CAR;
+                    GET 4;
+                    SENDER;
+                    MEM;
+                    IF
+                        {
+                        }
+                        {
+                            PUSH string "You are not a member";
+                            FAILWITH
+                        };
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    UNPAIR;
+                    UNPAIR;
+                    SWAP;
+                    UNPAIR;
+                    DIG 4;
+                    SOME;
+                    DIG 5;
+                    GET 3;
+                    UPDATE;
+                    PAIR;
+                    SWAP;
+                    PAIR;
+                    PAIR;
+                    DUP;
+                    DUP;
+                    GET 6;
+                    PUSH
+                        (option
+                            (set address))
+                        (Some
+                            {
+                            });
+                    DIG 3;
+                    GET 3;
+                    UPDATE;
+                    UPDATE 6;
+                    DUP;
+                    GET 3;
+                    PUSH nat 1;
+                    ADD;
+                    UPDATE 3;
+                    NIL operation
+                }
+                {
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    CAR;
+                    GET 4;
+                    SENDER;
+                    MEM;
+                    IF
+                        {
+                        }
+                        {
+                            PUSH string "You are not a member";
+                            FAILWITH
+                        };
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    CAR;
+                    CAR;
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    COMPARE;
+                    GE;
+                    IF
+                        {
+                        }
+                        {
+                            PUSH string "The lambda is inactive";
+                            FAILWITH
+                        };
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    CAR;
+                    GET 3;
+                    SWAP;
+                    DUP;
+                    DUG 2;
+                    MEM;
+                    IF
+                        {
+                        }
+                        {
+                            PUSH string "Lambda not found";
+                            FAILWITH
+                        };
+                    SWAP;
+                    DUP;
+                    GET 6;
+                    DUP;
+                    DUP 4;
+                    DUP;
+                    DUG 2;
+                    GET;
+                    IF_NONE
+                        {
+                            PUSH int 70;
+                            FAILWITH
+                        }
+                        {
+                        };
+                    PUSH bool True;
+                    SENDER;
+                    UPDATE;
+                    SOME;
+                    SWAP;
+                    UPDATE;
+                    UPDATE 6;
+                    DUP;
+                    GET 5;
+                    SWAP;
+                    DUP;
+                    DUG 3;
+                    GET 6;
+                    DUP 3;
+                    GET;
+                    IF_NONE
+                        {
+                            PUSH int 71;
+                            FAILWITH
+                        }
+                        {
+                        };
+                    SIZE;
+                    COMPARE;
+                    GE;
+                    IF
+                        {
+                            NIL operation;
+                            DUP 3;
+                            CAR;
+                            GET 3;
+                            DIG 2;
+                            GET;
+                            IF_NONE
+                                {
+                                    PUSH int 72;
+                                    FAILWITH
+                                }
+                                {
+                                };
+                            UNIT;
+                            EXEC;
+                            ITER
+                                {
+                                    CONS
+                                };
+                            SWAP;
+                            DUP;
+                            DUG 2;
+                            UNPAIR;
+                            CDR;
+                            DIG 3;
+                            GET 3;
+                            PAIR;
+                            PAIR;
+                            SWAP
+                        }
+                        {
+                            DROP;
+                            NIL operation
+                        }
+                };
+            NIL operation;
+            SWAP;
+            ITER
+                {
+                    CONS
+                };
+            PAIR
+        };
+    view
+        "get_lambda"
+        nat
+        (pair
+            (lambda
+                unit
+                (list operation))
+            bool)
+        {
+            UNPAIR;
+            SWAP;
+            DUP;
+            DUG 2;
+            CAR;
+            CAR;
+            SWAP;
+            DUP;
+            DUG 2;
+            COMPARE;
+            GE;
+            DIG 2;
+            CAR;
+            GET 3;
+            DIG 2;
+            GET;
+            IF_NONE
+                {
+                    PUSH int 85;
+                    FAILWITH
+                }
+                {
+                };
+            PAIR
+        }
+}
